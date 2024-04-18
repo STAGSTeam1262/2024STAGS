@@ -58,47 +58,49 @@ public class RobotContainer {
     NamedCommands.registerCommand("prepareShoot", new PrepareSpeakerShoot(m_shooter));
     NamedCommands.registerCommand("shootSpeaker", new SpeakerShoot(m_shooter, m_superstructure));
     NamedCommands.registerCommand("intakeGround", new GroundIntake(m_intake, m_superstructure));
+    NamedCommands.registerCommand("intakeGroundAuto", m_intake.feedIntakeCommand());
     NamedCommands.registerCommand("stopShooter", m_shooter.stopShooter());
     NamedCommands.registerCommand("stopFeeder", m_superstructure.stopFeeder());
     NamedCommands.registerCommand("zeroGyro", Commands.runOnce(drivebase::zeroGyro));
+    NamedCommands.registerCommand("AngleShooterAuto", m_shooter.rotateShooter(0).withTimeout(1));
     configureBindings();
   }
   private void configureBindings() {
-    //Main Driver Controller
-    Constants.DriverController.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    Constants.DriverController.b().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+    // Main Driver Controller
+    Constants.DriverController.a().onTrue((Commands.runOnce(drivebase::zeroGyro))); // Zero Gyro
+    Constants.DriverController.b().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly()); // Stop Movement On Swerve
     Constants.DriverController.y().whileTrue(
         Commands.deferredProxy(() -> drivebase.driveToPose(
                                    new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-                              ));
-    Constants.DriverController.leftTrigger().whileTrue(m_climber.runLeft(0.6));
-    Constants.DriverController.rightTrigger().whileTrue(m_climber.runRight(0.6));
-    Constants.DriverController.leftBumper().whileTrue(m_climber.runLeft(-0.6));
-    Constants.DriverController.rightBumper().whileTrue(m_climber.runRight(-0.6));
-    Constants.DriverController.povUp().whileTrue(new BothClimbers(m_climber));
-    Constants.DriverController.povDown().whileTrue(new BothClimbersDown(m_climber));
+                              )); // ? We may never know..
+    Constants.DriverController.leftTrigger().whileTrue(m_climber.runLeft(0.6)); // Raise Left Climber Side
+    Constants.DriverController.rightTrigger().whileTrue(m_climber.runRight(0.6)); // Raise Right Climber Side
+    Constants.DriverController.leftBumper().whileTrue(m_climber.runLeft(-0.6)); // Lower Left Climber Side
+    Constants.DriverController.rightBumper().whileTrue(m_climber.runRight(-0.6)); // Lower Right Climber Side
+    Constants.DriverController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
+    Constants.DriverController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
 
-    //Secondary Operator Controller
-    Constants.OperatorController.y().whileTrue(new PSIntake(m_shooter, m_superstructure));
-    Constants.OperatorController.x().whileTrue(new GroundIntake(m_intake, m_superstructure));
+    // Secondary Operator Controller
+    Constants.OperatorController.y().whileTrue(new PSIntake(m_shooter, m_superstructure)); // Hold To Intake Through Shooter
+    Constants.OperatorController.x().whileTrue(new GroundIntake(m_intake, m_superstructure)); // Hold To Intake Through Ground
     Constants.OperatorController.b().whileTrue(
                                         new PrepareSpeakerShoot(m_shooter)
                                         .andThen(new WaitCommand(1))
                                         .andThen (new SpeakerShoot(m_shooter, m_superstructure))
                                         .andThen(new WaitCommand(1))
                                         .andThen(Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder()))
-                                        .handleInterrupt(() -> Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder())));
+                                        .handleInterrupt(() -> Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder()))); // Hold B To Shoot
     Constants.OperatorController.a().whileTrue(
                                         new PrepareAmpShoot(m_shooter)
                                         .andThen(new WaitCommand(1.0))
                                         .andThen (new AmpShoot(m_shooter, m_superstructure))
-                                        .handleInterrupt(() -> m_shooter.stopShooter()));    
-    Constants.OperatorController.leftBumper().onTrue(m_intake.rotateIntake(-0.2)).onFalse(m_intake.stopRotate());
-    Constants.OperatorController.rightBumper().onTrue(m_intake.rotateIntake(0.2)).onFalse(m_intake.stopRotate());
-    Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15));
-    Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15));
-    Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber));
-    Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber));
+                                        .handleInterrupt(() -> m_shooter.stopShooter())); // Amp At Some Point?
+    Constants.OperatorController.leftBumper().onTrue(m_intake.rotateIntake(-0.2)).onFalse(m_intake.stopRotate()); // Lower Intake
+    Constants.OperatorController.rightBumper().onTrue(m_intake.rotateIntake(0.2)).onFalse(m_intake.stopRotate()); // Raise Intake
+    Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15)); // Lower Shooter
+    Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15)); // Raise Shooter
+    Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
+    Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

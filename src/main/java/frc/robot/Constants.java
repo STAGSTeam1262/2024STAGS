@@ -20,9 +20,9 @@ import swervelib.math.Matter;
 public final class Constants {
   //Drive Team Controller Constants
   public static final CommandXboxController DriverController =
-            new CommandXboxController(DriveteamConstants.kDriverControllerPort);
+            new CommandXboxController(DriveteamConstants.kDriverControllerPort); // Primary
   public static final CommandXboxController OperatorController =
-            new CommandXboxController(DriveteamConstants.kOperatorControllerPort);
+            new CommandXboxController(DriveteamConstants.kOperatorControllerPort); // Secondary
 
   public static final boolean debug = true;
   
