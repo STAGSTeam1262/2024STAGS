@@ -20,12 +20,15 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.io.File;
+import java.util.Optional;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -102,6 +105,7 @@ public class RobotContainer {
     Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -109,8 +113,20 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand()
   {
-    // An example command will be run in autonomous
-    return new PathPlannerAuto("New Auto");
+    Optional<DriverStation.Alliance> blue = Optional.of(DriverStation.Alliance.Blue);
+    Optional<DriverStation.Alliance> red = Optional.of(DriverStation.Alliance.Red);
+    String autoName = "";
+    // Choose Auto To Be Used. If alliance is not set, then this will just shoot at the speaker.
+    if(DriverStation.getAlliance().isPresent()){
+      if(DriverStation.getAlliance() == blue){
+        autoName = "New Auto";
+      } else if(DriverStation.getAlliance() == red){
+        autoName = "New Auto";
+      } else {
+        autoName = "New Auto";
+      }
+    }
+    return new PathPlannerAuto(autoName);
   }
 
   public void setDriveMode()
