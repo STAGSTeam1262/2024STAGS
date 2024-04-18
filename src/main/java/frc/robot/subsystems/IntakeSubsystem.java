@@ -13,7 +13,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private final CANSparkMax IntakeRoller;
   private final DigitalInput intakeUpperLimit = new DigitalInput(0);
   private final DigitalInput intakeLowerLimit = new DigitalInput(2);
-  private final SuperStructure m_superstructure = new SuperStructure();
 
   public IntakeSubsystem() {
     IntakeDeploy = new CANSparkMax(Constants.GroundIntakeConstants.IntakeDeployMotorID, CANSparkLowLevel.MotorType.kBrushless);
@@ -25,23 +24,6 @@ public class IntakeSubsystem extends SubsystemBase {
   }
   public void feedIntake(double power) {
         IntakeRoller.set(power);
-  }
-
-  public Command feedIntakeCommand(){
-    return this.startEnd(
-      () -> {
-        if (m_superstructure.lightSensor.get()) {
-          m_superstructure.setFeeder(0.8);
-          feedIntake(1.0);
-        } else {
-          m_superstructure.stop();
-          stop();
-        }
-      },
-      () -> {
-          m_superstructure.stop();
-          stop();
-      });
   }
 
   public void stop() {
@@ -62,6 +44,27 @@ public class IntakeSubsystem extends SubsystemBase {
       }
     }
   }
+
+  public Command lowerIntake(){
+    return this.startEnd(
+            () -> {
+                rotateIntake(-1);
+            },
+            () -> {
+                stopRotation();
+            });
+  }
+
+  public Command raiseIntake(){
+    return this.startEnd(
+            () -> {
+                rotateIntake(1);
+            },
+            () -> {
+                stopRotation();
+            });
+  }
+
   public void stopRotation() {
     IntakeDeploy.set(0);
   }

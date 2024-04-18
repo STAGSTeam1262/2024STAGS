@@ -55,14 +55,16 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  boolean alwaysUseBackupAuto = false; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
+  boolean alwaysUseBackupAuto = true; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     NamedCommands.registerCommand("prepareShoot", new PrepareSpeakerShoot(m_shooter));
     NamedCommands.registerCommand("shootSpeaker", new SpeakerShoot(m_shooter, m_superstructure));
     NamedCommands.registerCommand("intakeGround", new GroundIntake(m_intake, m_superstructure));
-    NamedCommands.registerCommand("intakeGroundAuto", m_intake.feedIntakeCommand());
+    NamedCommands.registerCommand("intakeGroundAuto", m_intake.floorIntake(0.1).withTimeout(5));
+    NamedCommands.registerCommand("intakeLower", m_intake.lowerIntake());
+    NamedCommands.registerCommand("intakeRaise", m_intake.raiseIntake());
     NamedCommands.registerCommand("stopShooter", m_shooter.stopShooter());
     NamedCommands.registerCommand("stopFeeder", m_superstructure.stopFeeder());
     NamedCommands.registerCommand("zeroGyro", Commands.runOnce(drivebase::zeroGyro));
@@ -121,19 +123,17 @@ public class RobotContainer {
     then this will just shoot at the speaker. 
     Otherwise, a four note auto will run with a separate auto for each team.
     Currently, the same auto runs for both teams. I'm not messing with that yet. */
-    if(DriverStation.getAlliance().isPresent()){
       if(alwaysUseBackupAuto == true){
         System.out.println("[Pathplanner] Using Backup Auto!");
-      } else if(DriverStation.getAlliance() == blue){
+      } else if (DriverStation.getAlliance().equals(blue)){
         autoName = "New Auto";
         System.out.println("[Pathplanner] Using Blue Auto!");
-      } else if(DriverStation.getAlliance() == red){
+      } else if (DriverStation.getAlliance().equals(red)){
         autoName = "New Auto";
         System.out.println("[Pathplanner] Using Red Auto!");
       } else {
-        System.out.println("[Pathplanner] Using Backup Auto!");
+        System.out.println("[Pathplanner] Using Backup Auto");
       }
-    }
     // Sends auto that runs in autonomous using the string name.
     return new PathPlannerAuto(autoName);
   }

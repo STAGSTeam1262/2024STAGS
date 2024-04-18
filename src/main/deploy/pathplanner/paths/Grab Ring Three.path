@@ -41,7 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "feedIntakeCommand"
+                "name": "intakeGroundAuto"
               }
             },
             {
@@ -72,5 +72,5 @@
     "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
