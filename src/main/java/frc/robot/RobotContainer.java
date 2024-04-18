@@ -55,6 +55,7 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+  boolean alwaysUseBackupAuto = false; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -115,17 +116,25 @@ public class RobotContainer {
   {
     Optional<DriverStation.Alliance> blue = Optional.of(DriverStation.Alliance.Blue);
     Optional<DriverStation.Alliance> red = Optional.of(DriverStation.Alliance.Red);
-    String autoName = "";
-    // Choose Auto To Be Used. If alliance is not set, then this will just shoot at the speaker.
+    String autoName = "Backup"; // Set to backup by default.
+    /* Choose Auto To Be Used. If alliance is not set or "alwaysUseBackupAuto" is set to true, 
+    then this will just shoot at the speaker. 
+    Otherwise, a four note auto will run with a separate auto for each team.
+    Currently, the same auto runs for both teams. I'm not messing with that yet. */
     if(DriverStation.getAlliance().isPresent()){
-      if(DriverStation.getAlliance() == blue){
+      if(alwaysUseBackupAuto == true){
+        System.out.println("[Pathplanner] Using Backup Auto!");
+      } else if(DriverStation.getAlliance() == blue){
         autoName = "New Auto";
+        System.out.println("[Pathplanner] Using Blue Auto!");
       } else if(DriverStation.getAlliance() == red){
         autoName = "New Auto";
+        System.out.println("[Pathplanner] Using Red Auto!");
       } else {
-        autoName = "New Auto";
+        System.out.println("[Pathplanner] Using Backup Auto!");
       }
     }
+    // Sends auto that runs in autonomous using the string name.
     return new PathPlannerAuto(autoName);
   }
 
