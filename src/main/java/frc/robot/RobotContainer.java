@@ -63,7 +63,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("prepareShoot", new PrepareSpeakerShoot(m_shooter));
     NamedCommands.registerCommand("shootSpeaker", new SpeakerShoot(m_shooter, m_superstructure));
     NamedCommands.registerCommand("intakeGround", new GroundIntake(m_intake, m_superstructure));
-    NamedCommands.registerCommand("intakeGroundAuto", m_intake.floorIntake(0.1).withTimeout(5));
+    NamedCommands.registerCommand("intakeGroundAuto", useIntake());
     NamedCommands.registerCommand("intakeLower", m_intake.lowerIntake());
     NamedCommands.registerCommand("intakeRaise", m_intake.raiseIntake());
     NamedCommands.registerCommand("stopShooter", m_shooter.stopShooter());
@@ -109,8 +109,8 @@ public class RobotContainer {
     Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
   }
-
-  public Command rotateShooter() {
+  // Method used during auto to use intake. Integer values have placeholder values, and will be set later.
+  public Command useIntake() {
     Subsystem fakeSubsystem = new Subsystem() {
       // This subsystem is only used to have the command interface for subsystems. It's funny, but it works.
     };
