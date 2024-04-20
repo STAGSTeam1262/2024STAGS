@@ -48,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command lowerIntake(){
     return this.startEnd(
             () -> {
-                rotateIntake(-1);
+                rotateIntake(0);
             },
             () -> {
                 stopRotation();
