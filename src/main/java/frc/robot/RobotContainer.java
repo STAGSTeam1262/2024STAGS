@@ -62,6 +62,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeRaise", m_intake.raiseIntake());
     NamedCommands.registerCommand("stopShooter", m_shooter.stopShooter());
     NamedCommands.registerCommand("stopFeeder", m_superstructure.stopFeeder());
+    NamedCommands.registerCommand("stopIntakeFeeder", Commands.parallel(m_intake.stopIntake(), m_superstructure.stopFeeder()).withTimeout(1));
     NamedCommands.registerCommand("zeroGyro", Commands.runOnce(drivebase::zeroGyro));
     NamedCommands.registerCommand("AngleShooterAuto", m_shooter.rotateShooter(0).withTimeout(1));
     configureBindings();
@@ -105,11 +106,7 @@ public class RobotContainer {
   }
   // Method used during auto to use intake. Integer values have placeholder values, and will be set later.
   public Command useIntake() {
-    return Commands.parallel(m_intake.floorIntakeAuto(), m_superstructure.startFeeder()).withTimeout(2).andThen(m_intake.stopIntake()).alongWith(m_superstructure.stopFeeder());
-    /* 1. Start intake at power = 1.0 and feeder at power = 0.8. (Taken from GroundIntake.java) 
-     * 2. Wait 2 seconds while intake is running.
-     * 3. After waiting, stop the intake and feeder.
-    */
+    return Commands.parallel(m_intake.floorIntakeAuto(), m_superstructure.startFeeder()).withTimeout(1);
   }
 
   /**

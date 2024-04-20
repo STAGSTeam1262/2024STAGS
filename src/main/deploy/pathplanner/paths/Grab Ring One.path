@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4194171612308972,
-        "y": 6.230165042355762
+        "x": 1.36086297850199,
+        "y": 5.656334051612468
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 6.99
       },
       "prevControl": {
-        "x": 1.0191817003684558,
-        "y": 6.9451566088896755
+        "x": 1.9932481519741916,
+        "y": 6.792285196553275
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "LowerIntake",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.1,
       "command": {
         "type": "sequential",
         "data": {
@@ -50,7 +50,7 @@
     },
     {
       "name": "UseIntake",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.55,
       "command": {
         "type": "sequential",
         "data": {
@@ -65,6 +65,12 @@
               "type": "wait",
               "data": {
                 "waitTime": 2.0
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "stopIntakeFeeder"
               }
             }
           ]
