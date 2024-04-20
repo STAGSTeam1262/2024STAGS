@@ -28,14 +28,8 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -55,14 +49,15 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  boolean alwaysUseBackupAuto = true; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
+
+  boolean alwaysUseBackupAuto = false; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     NamedCommands.registerCommand("prepareShoot", new PrepareSpeakerShoot(m_shooter));
     NamedCommands.registerCommand("shootSpeaker", new SpeakerShoot(m_shooter, m_superstructure));
     NamedCommands.registerCommand("intakeGround", new GroundIntake(m_intake, m_superstructure));
-    NamedCommands.registerCommand("intakeGroundAuto", m_intake.floorIntake(0.1).withTimeout(5));
+    NamedCommands.registerCommand("intakeGroundAuto", useIntake());
     NamedCommands.registerCommand("intakeLower", m_intake.lowerIntake());
     NamedCommands.registerCommand("intakeRaise", m_intake.raiseIntake());
     NamedCommands.registerCommand("stopShooter", m_shooter.stopShooter());
@@ -107,6 +102,14 @@ public class RobotContainer {
     Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15)); // Raise Shooter
     Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
+  }
+  // Method used during auto to use intake. Integer values have placeholder values, and will be set later.
+  public Command useIntake() {
+    return Commands.parallel(m_intake.floorIntakeAuto(), m_superstructure.startFeeder()).withTimeout(2).andThen(m_intake.stopIntake()).alongWith(m_superstructure.stopFeeder());
+    /* 1. Start intake at power = 1.0 and feeder at power = 0.8. (Taken from GroundIntake.java) 
+     * 2. Wait 2 seconds while intake is running.
+     * 3. After waiting, stop the intake and feeder.
+    */
   }
 
   /**

@@ -48,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command lowerIntake(){
     return this.startEnd(
             () -> {
-                rotateIntake(-1);
+                rotateIntake(0);
             },
             () -> {
                 stopRotation();
@@ -70,6 +70,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
   public Command floorIntake (double power) {
     return run(() -> feedIntake(power));
+  }
+  public Command floorIntakeAuto() {
+    return run(() -> feedIntake(1.0));
   }
   public Command stopIntake () {
     return run(() -> stop());
