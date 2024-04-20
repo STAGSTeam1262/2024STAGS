@@ -27,4 +27,7 @@ public class SuperStructure extends SubsystemBase {
     public Command stopFeeder () {
         return run(() -> stop()).withTimeout(1);
     }
+    public Command startFeeder() {
+        return run(() -> setFeeder(0.8));
+    }
 }

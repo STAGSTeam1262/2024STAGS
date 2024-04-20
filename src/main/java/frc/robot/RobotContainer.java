@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -50,7 +49,6 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  private final Subsystem fakeSubsystem = new Subsystem() {}; // This subsystem is only used to have the command interface for subsystems. It's funny, but it works.
 
   boolean alwaysUseBackupAuto = false; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
 
@@ -107,8 +105,12 @@ public class RobotContainer {
   }
   // Method used during auto to use intake. Integer values have placeholder values, and will be set later.
   public Command useIntake() {
-    return fakeSubsystem.run(() -> m_intake.floorIntake(0.1).withTimeout(2).andThen(m_intake.stopIntake()));
-}
+    return Commands.parallel(m_intake.floorIntakeAuto(), m_superstructure.startFeeder()).withTimeout(2).andThen(m_intake.stopIntake()).alongWith(m_superstructure.stopFeeder());
+    /* 1. Start intake at power = 1.0 and feeder at power = 0.8. (Taken from GroundIntake.java) 
+     * 2. Wait 2 seconds while intake is running.
+     * 3. After waiting, stop the intake and feeder.
+    */
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
