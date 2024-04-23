@@ -58,8 +58,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("shootSpeaker", new SpeakerShoot(m_shooter, m_superstructure));
     NamedCommands.registerCommand("intakeGround", new GroundIntake(m_intake, m_superstructure));
     NamedCommands.registerCommand("intakeGroundAuto", useIntake());
-    NamedCommands.registerCommand("intakeLower", m_intake.lowerIntake());
-    NamedCommands.registerCommand("intakeRaise", m_intake.raiseIntake());
+    NamedCommands.registerCommand("intakeLower", lowerIntake());
+    NamedCommands.registerCommand("intakeRaise", raiseIntake());
     NamedCommands.registerCommand("stopShooter", m_shooter.stopShooter());
     NamedCommands.registerCommand("stopFeeder", m_superstructure.stopFeeder());
     NamedCommands.registerCommand("stopIntakeFeeder", Commands.parallel(m_intake.stopIntake(), m_superstructure.stopFeeder()).withTimeout(1));
@@ -104,9 +104,21 @@ public class RobotContainer {
     Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
   }
-  // Method used during auto to use intake. Integer values have placeholder values, and will be set later.
+  // Methods used during auto to use intake. Integer values have placeholder values, and will be set later.
+
+  // Method For Grabbing Rings With Intake. This method works, but will be tuned during testing.
   public Command useIntake() {
     return Commands.parallel(m_intake.floorIntakeAuto(), m_superstructure.startFeeder()).withTimeout(1);
+  }
+
+  // Method For Lowering The Intake. This method does nothing at the moment, until we can start testing it.
+  public Command lowerIntake(){
+    return m_intake.rotateIntake(0).withTimeout(1).andThen(m_intake.stopRotate());
+  }
+
+  // Method For Raising The Intake. This method does nothing at the moment, until we can start testing it.
+  public Command raiseIntake(){
+    return m_intake.rotateIntake(0).withTimeout(1).andThen(m_intake.stopRotate());
   }
 
   /**

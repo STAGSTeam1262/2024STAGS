@@ -45,26 +45,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
   }
 
-  public Command lowerIntake(){
-    return this.startEnd(
-            () -> {
-                rotateIntake(0);
-            },
-            () -> {
-                stopRotation();
-            });
-  }
-
-  public Command raiseIntake(){
-    return this.startEnd(
-            () -> {
-                rotateIntake(1);
-            },
-            () -> {
-                stopRotation();
-            });
-  }
-
   public void stopRotation() {
     IntakeDeploy.set(0);
   }
