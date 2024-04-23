@@ -68,6 +68,12 @@ public class ShooterSubsystem extends SubsystemBase{
     public Command manualShoot(double power) {
         return run(() -> setShooterWheels(power));
     }
+    public Command manualShootBottom(double power){
+        return run(() -> setBottomWheel(power));
+    }
+    public Command manualShootTop(double power){
+        return run(() -> setTopWheel(power));
+    }
     public Command stopShooter() {
         return run(() -> stopShooterWheels()).withTimeout(1);
     }
@@ -80,6 +86,12 @@ public class ShooterSubsystem extends SubsystemBase{
                 stopPivot();
             });
     }
+
+    public void prepareAmpShoot(){
+        setBottomWheel(0.3);
+        setTopWheel(0.15);
+    }
+
     @Override
     public void periodic()
     {

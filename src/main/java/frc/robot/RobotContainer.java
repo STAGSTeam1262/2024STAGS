@@ -5,12 +5,10 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AmpShoot;
 import frc.robot.commands.BothClimbers;
 import frc.robot.commands.BothClimbersDown;
 import frc.robot.commands.GroundIntake;
 import frc.robot.commands.PSIntake;
-import frc.robot.commands.PrepareAmpShoot;
 import frc.robot.commands.PrepareSpeakerShoot;
 import frc.robot.commands.SpeakerShoot;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -62,7 +60,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("intakeRaise", raiseIntake());
     NamedCommands.registerCommand("stopShooter", m_shooter.stopShooter());
     NamedCommands.registerCommand("stopFeeder", m_superstructure.stopFeeder());
-    NamedCommands.registerCommand("stopIntakeFeeder", Commands.parallel(m_intake.stopIntake(), m_superstructure.stopFeeder()).withTimeout(1));
+    NamedCommands.registerCommand("stopIntakeFeeder", stopIntake());
     NamedCommands.registerCommand("zeroGyro", Commands.runOnce(drivebase::zeroGyro));
     NamedCommands.registerCommand("AngleShooterAuto", m_shooter.rotateShooter(0).withTimeout(1));
     configureBindings();
@@ -93,10 +91,11 @@ public class RobotContainer {
                                         .andThen(Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder()))
                                         .handleInterrupt(() -> Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder()))); // Hold B To Shoot
     Constants.OperatorController.a().whileTrue(
-                                        new PrepareAmpShoot(m_shooter)
-                                        .andThen(new WaitCommand(1.0))
-                                        .andThen (new AmpShoot(m_shooter, m_superstructure))
-                                        .handleInterrupt(() -> m_shooter.stopShooter())); // Amp At Some Point?
+                                     prepareAmpShoot()
+                                    .withTimeout(1)
+                                    .andThen(AmpShoot()
+                                    .handleInterrupt(() -> 
+                                     stopAmpShoot())));
     Constants.OperatorController.leftBumper().onTrue(m_intake.rotateIntake(-0.2)).onFalse(m_intake.stopRotate()); // Lower Intake
     Constants.OperatorController.rightBumper().onTrue(m_intake.rotateIntake(0.2)).onFalse(m_intake.stopRotate()); // Raise Intake
     Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15)); // Lower Shooter
@@ -121,6 +120,23 @@ public class RobotContainer {
     return m_intake.rotateIntake(0).withTimeout(1).andThen(m_intake.stopRotate());
   }
 
+  // Method For Stopping The Intake
+  public Command stopIntake(){
+    return Commands.parallel(m_intake.stopIntake(), m_superstructure.stopFeeder()).withTimeout(1);
+  }
+
+  // Amp Methods, Set How Trevor Put Originally.
+  public Command prepareAmpShoot(){
+    return Commands.run(() -> m_shooter.prepareAmpShoot());
+  }
+  public Command AmpShoot(){
+    return m_superstructure.setFeederControlled(0.6);
+  }
+  public void stopAmpShoot(){
+    m_shooter.stopShooterWheels();
+    m_superstructure.stopFeeder();
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -132,18 +148,21 @@ public class RobotContainer {
     Optional<DriverStation.Alliance> red = Optional.of(DriverStation.Alliance.Red);
     String autoName = "Backup"; // Set to backup by default.
     /* Choose Auto To Be Used. If alliance is not set or "alwaysUseBackupAuto" is set to true, 
-    then this will just shoot at the speaker. 
+    then this will just shoot at the speaker, currently. 
     Otherwise, a four note auto will run with a separate auto for each team.
     Currently, the same auto runs for both teams. I'm not messing with that yet. */
       if(alwaysUseBackupAuto == true){
         System.out.println("[Pathplanner] Using Backup Auto!");
       } else if (DriverStation.getAlliance().equals(blue)){
+        // Blue Alliance Auto Is Placed Here.
         autoName = "New Auto";
         System.out.println("[Pathplanner] Using Blue Auto!");
       } else if (DriverStation.getAlliance().equals(red)){
+        // Red Alliance Auto Is Placed Here. This auto doesn't currently exist, as I am waiting until I can test.
         autoName = "New Auto";
         System.out.println("[Pathplanner] Using Red Auto!");
       } else {
+        // Backup Auto is set at the top, and this simply prints that it will be used. Alliance autos will override the backup auto.
         System.out.println("[Pathplanner] Using Backup Auto");
       }
     // Sends auto that runs in autonomous using the string name.

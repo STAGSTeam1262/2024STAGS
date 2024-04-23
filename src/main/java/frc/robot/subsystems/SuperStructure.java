@@ -30,4 +30,7 @@ public class SuperStructure extends SubsystemBase {
     public Command startFeeder() {
         return run(() -> setFeeder(0.8));
     }
+    public Command setFeederControlled(double power){
+        return run(() -> setFeeder(power));
+    }
 }
