@@ -90,12 +90,12 @@ public class RobotContainer {
                                         .andThen(new WaitCommand(1))
                                         .andThen(Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder()))
                                         .handleInterrupt(() -> Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder()))); // Hold B To Shoot
-    Constants.OperatorController.a().whileTrue(
+    /*Constants.OperatorController.a().whileTrue(
                                      prepareAmpShoot()
                                     .withTimeout(1)
                                     .andThen(AmpShoot()
                                     .handleInterrupt(() -> 
-                                     stopAmpShoot())));
+                                     stopAmpShoot()))); */
     Constants.OperatorController.leftBumper().onTrue(m_intake.rotateIntake(-0.2)).onFalse(m_intake.stopRotate()); // Lower Intake
     Constants.OperatorController.rightBumper().onTrue(m_intake.rotateIntake(0.2)).onFalse(m_intake.stopRotate()); // Raise Intake
     Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15)); // Lower Shooter
@@ -125,7 +125,7 @@ public class RobotContainer {
     return Commands.parallel(m_intake.stopIntake(), m_superstructure.stopFeeder()).withTimeout(1);
   }
 
-  // Amp Methods, Set How Trevor Put Originally.
+  /* Amp Methods, Set How Trevor Put Originally.
   public Command prepareAmpShoot(){
     return Commands.run(() -> m_shooter.prepareAmpShoot());
   }
@@ -135,7 +135,7 @@ public class RobotContainer {
   public void stopAmpShoot(){
     m_shooter.stopShooterWheels();
     m_superstructure.stopFeeder();
-  }
+  } */
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -155,11 +155,11 @@ public class RobotContainer {
         System.out.println("[Pathplanner] Using Backup Auto!");
       } else if (DriverStation.getAlliance().equals(blue)){
         // Blue Alliance Auto Is Placed Here.
-        autoName = "New Auto";
+        autoName = "Blue";
         System.out.println("[Pathplanner] Using Blue Auto!");
       } else if (DriverStation.getAlliance().equals(red)){
         // Red Alliance Auto Is Placed Here. This auto doesn't currently exist, as I am waiting until I can test.
-        autoName = "New Auto";
+        autoName = "Red";
         System.out.println("[Pathplanner] Using Red Auto!");
       } else {
         // Backup Auto is set at the top, and this simply prints that it will be used. Alliance autos will override the backup auto.

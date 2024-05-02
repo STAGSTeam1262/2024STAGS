@@ -5,7 +5,7 @@
       "x": 1.34,
       "y": 5.55
     },
-    "rotation": 0
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -70,7 +70,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Grab Ring One"
+            "pathName": "Grab Ring One R"
           }
         },
         {
@@ -82,7 +82,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Shoot One"
+            "pathName": "Go To Shoot One R"
           }
         },
         {
@@ -150,7 +150,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Grab Ring Two"
+            "pathName": "Grab Ring Two R"
           }
         },
         {
@@ -162,7 +162,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Shoot Two"
+            "pathName": "Go To Shoot Two R"
           }
         },
         {
@@ -230,7 +230,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Grab Ring Three"
+            "pathName": "Grab Ring Three R"
           }
         },
         {
@@ -242,7 +242,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Go To Shoot Three"
+            "pathName": "Go To Shoot Three R"
           }
         },
         {
