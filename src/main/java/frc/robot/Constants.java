@@ -64,6 +64,7 @@ public final class Constants {
 
   public static class LimelightConstants {
     //Limelight mounting information
+    public static final String limelightName = "limelight";
     public static final boolean limelightEnabled = true;
     public static final double limelightAngle = 5;
     public static final double limelightHeight = 5;
