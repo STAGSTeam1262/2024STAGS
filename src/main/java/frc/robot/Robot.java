@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.ShooterSubsystem;
+
 import java.io.File;
 import java.io.IOException;
 import swervelib.parser.SwerveParser;
@@ -73,6 +76,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit()
   {
+    m_robotContainer.usingVision = false;
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
@@ -95,6 +99,9 @@ public class Robot extends TimedRobot
   public void autonomousInit()
   {
     m_robotContainer.setMotorBrake(true);
+    // Robot should have the correct angle, and this angle should not change, so we disable vision.
+    // This is more of a safeguard really.
+    m_robotContainer.usingVision = false;
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -125,14 +132,42 @@ public class Robot extends TimedRobot
     }
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);
+    // usingVision = true; Do not add this until after testing is complete.
   }
 
   /**
    * This function is called periodically during operator control.
    */
   @Override
-  public void teleopPeriodic()
-  {
+  public void teleopPeriodic(){
+    // Since we can access any subsystem from the Robot.java class, I think it makes sense to put our tracking here.
+    Limelight limelight = m_robotContainer.getLimelight();
+    ShooterSubsystem shooterSubsystem = m_robotContainer.getShooterSubsystem();
+    if(m_robotContainer.usingVision){ // Makes sure the Limelight Never Rotates The Shooter Unless It Is Supposed To.
+      /* 
+       * Here we are using the fact that objects farther away appear higher in any FOV.
+       * We can use this by finding the yOffset, doing some copy and paste math, and then comparing our shooter position to the angle returned.
+       * The only current issue is that there is no limit on this system. It can rotate as far as it wants. 
+       * This shouldn't be an issue, but it's better to be safe.
+       */
+      if(limelight.enabled){ // Checks That The Limelight Actually Exists At This Point
+        if(limelight.getTargetVisible()){ // Checks That The Limelight Is Tracking
+          if(shooterSubsystem.getShooterPosition() <= 100 || shooterSubsystem.getShooterPosition() >= 20){ // Hard Limit Just In Case The Limelight Rotates Too Far. Mostly For Test Stage
+            if(shooterSubsystem.getShooterPosition() < limelight.angleToGoalDegrees){
+              shooterSubsystem.rotatePivot(0.15);
+            } else if(shooterSubsystem.getShooterPosition() > limelight.angleToGoalDegrees){
+              shooterSubsystem.rotatePivot(-0.15);
+            } else if(shooterSubsystem.getShooterPosition() == limelight.angleToGoalDegrees){
+              shooterSubsystem.stopPivot();
+            }
+          } else {
+            shooterSubsystem.stopPivot();
+          }
+        } else {
+          shooterSubsystem.stopPivot();
+      }
+    } 
+  }
   }
 
   @Override

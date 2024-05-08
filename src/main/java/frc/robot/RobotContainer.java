@@ -12,6 +12,7 @@ import frc.robot.commands.PSIntake;
 import frc.robot.commands.PrepareSpeakerShoot;
 import frc.robot.commands.SpeakerShoot;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -47,6 +48,10 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final ClimberSubsystem m_climber = new ClimberSubsystem();
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+  private final Limelight m_Limelight = Limelight.getLimelightInstance();
+
+  // Important Booleans. Controls Limelight Usage Along With Enabling The Backup For An Autonomous.
+  boolean usingVision = false; // Tells If The Limelight Should Be Modifying The Shooter Angle. 
 
   boolean alwaysUseBackupAuto = false; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
 
@@ -90,18 +95,22 @@ public class RobotContainer {
                                         .andThen(new WaitCommand(1))
                                         .andThen(Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder()))
                                         .handleInterrupt(() -> Commands.parallel(m_shooter.stopShooter(),m_superstructure.stopFeeder()))); // Hold B To Shoot
-    /*Constants.OperatorController.a().whileTrue(
+    Constants.OperatorController.a().whileTrue(
                                      prepareAmpShoot()
                                     .withTimeout(1)
                                     .andThen(AmpShoot()
                                     .handleInterrupt(() -> 
-                                     stopAmpShoot()))); */
+                                     stopAmpShoot())));
     Constants.OperatorController.leftBumper().onTrue(m_intake.rotateIntake(-0.2)).onFalse(m_intake.stopRotate()); // Lower Intake
     Constants.OperatorController.rightBumper().onTrue(m_intake.rotateIntake(0.2)).onFalse(m_intake.stopRotate()); // Raise Intake
-    Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15)); // Lower Shooter
-    Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15)); // Raise Shooter
+    Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15).alongWith(Commands.run(() -> usingVision = false))); // Lower Shooter
+    Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15).alongWith(Commands.run(() -> usingVision = false))); // Raise Shooter
     Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
+    Constants.OperatorController.povLeft().onTrue(Commands.run(() -> {
+      usingVision = !usingVision;
+      m_shooter.stopPivot();
+    }));
   }
   // Methods used during auto to use intake. Integer values have placeholder values, and will be set later.
 
@@ -125,17 +134,28 @@ public class RobotContainer {
     return Commands.parallel(m_intake.stopIntake(), m_superstructure.stopFeeder()).withTimeout(1);
   }
 
-  /* Amp Methods, Set How Trevor Put Originally.
+  // Amp Methods, Set How Trevor Put Originally.
   public Command prepareAmpShoot(){
     return Commands.run(() -> m_shooter.prepareAmpShoot());
   }
+  
   public Command AmpShoot(){
     return m_superstructure.setFeederControlled(0.6);
   }
+  
   public void stopAmpShoot(){
     m_shooter.stopShooterWheels();
     m_superstructure.stopFeeder();
-  } */
+  }
+
+  // Getting subsystems. This gave me a headache for no reason.
+  public Limelight getLimelight(){ // Could've just made the class public, but it works.
+    return m_Limelight;
+  }
+
+  public ShooterSubsystem getShooterSubsystem(){
+    return m_shooter;
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

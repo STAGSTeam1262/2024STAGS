@@ -23,7 +23,6 @@ public class ShooterSubsystem extends SubsystemBase{
     private final CANSparkMax shooterBottom;
     private final CANcoder shooterEncoder;
 
-
     public ShooterSubsystem() {
         shooterAngle.setNeutralMode(NeutralModeValue.Brake);
 
