@@ -88,6 +88,8 @@ public class RobotContainer {
       usingVision = !usingVision;
       m_shooter.stopPivot();
     }));
+    Constants.DriverController.povRight().onTrue(Commands.run(() -> 
+    System.out.println(m_Limelight.angleToGoalDegrees))); // Print Limelight's Desired Angle, If Valid
 
     // Secondary Operator Controller
     Constants.OperatorController.y().whileTrue(new PSIntake(m_shooter, m_superstructure)); // Hold To Intake Through Shooter
@@ -116,7 +118,7 @@ public class RobotContainer {
       m_shooter.stopPivot();
     }));
     Constants.OperatorController.povRight().onTrue(Commands.run(() -> 
-    System.out.println(m_Limelight.angleToGoalDegrees)));
+    System.out.println(m_Limelight.angleToGoalDegrees))); // Print Limelight's Desired Angle, If Valid
   }
   // Methods used during auto to use intake. Integer values have placeholder values, and will be set later.
 
