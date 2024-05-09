@@ -59,7 +59,7 @@ public class Limelight extends SubsystemBase {
         yOffsetMeters = ty.getDouble(0.0);
 
     // Get Angle
-        double angleToGoalDegreesUnfinished = limeAngle + 5;
+        double angleToGoalDegreesUnfinished = limeAngle + yOffsetMeters;
         double angleToGoalRadians = angleToGoalDegreesUnfinished * (3.14159 / 180.0);
         angleToGoalDegrees = Units.radiansToDegrees(angleToGoalRadians);
       }
