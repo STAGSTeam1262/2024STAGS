@@ -132,7 +132,7 @@ public class Robot extends TimedRobot
     }
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);
-    // usingVision = true; Do not add this until after testing is complete.
+    // m_robotContainer.usingVision = true;
   }
 
   /**

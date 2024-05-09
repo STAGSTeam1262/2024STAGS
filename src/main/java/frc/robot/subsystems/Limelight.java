@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -41,37 +42,26 @@ public class Limelight extends SubsystemBase {
 
     public static Limelight getLimelightInstance() {
         if (mainLimelight == null) {
-            mainLimelight =
-                new Limelight(
-                    LimelightConstants.limelightHeight,
-                    LimelightConstants.limelightAngle,
-                    LimelightConstants.limelightXOffsetMeters,
-                    LimelightConstants.limelightYOffsetMeters,
-                    LimelightConstants.limelightEnabled);
+          mainLimelight = new Limelight(LimelightConstants.limelightEnabled);
         }
         return mainLimelight;
     }
 
-    public Limelight(double limelightHeightMeters, double limelightAngleDegrees, double xOffsetMeters, double yOffsetMeters, boolean enabled) {
-        limeHeight = limelightHeightMeters;
-        limeAngle = limelightAngleDegrees;
-        offset = new Translation2d(xOffsetMeters, yOffsetMeters);
+    public Limelight(boolean enabled) {
         this.enabled = enabled;
     }
 
     @Override
     public void periodic() {
-      if (enabled && getTargetVisible()){
-        table = NetworkTableInstance.getDefault().getTable(name);
+      if (getTargetVisible()){
+        // Set yOffset
         ty = table.getEntry("ty");
         yOffsetMeters = ty.getDouble(0.0);
 
-    // distance from the target to the floor
-        angleToGoalDegrees = limeAngle + yOffsetMeters;
-        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
-
-    //calculate distance
-        distanceFromLimelightToGoalInches = (speakerHeight - limeHeight) / Math.tan(angleToGoalRadians);
+    // Get Angle
+        double angleToGoalDegreesUnfinished = limeAngle + yOffsetMeters;
+        double angleToGoalRadians = angleToGoalDegreesUnfinished * (3.14159 / 180.0);
+        angleToGoalDegrees = Units.radiansToDegrees(angleToGoalRadians);
       }
     }
 
