@@ -147,8 +147,8 @@ public class Robot extends TimedRobot
       /* 
        * Here we are using the fact that objects farther away appear higher in any FOV.
        * We can use this by finding the yOffset, doing some copy and paste math, and then comparing our shooter position to the angle returned.
-       * The only current issue is that there is no limit on this system. It can rotate as far as it wants. 
-       * This shouldn't be an issue, but it's better to be safe.
+       * There is a limit, and the shooter will stop once it reaches that limit.(Though it shouldn't ever reach that point.)
+       * After this point, the operator should manually move the shooter, because the vision is messed up in some way.
        */
       if(limelight.enabled){ // Checks That The Limelight Actually Exists At This Point
         if(limelight.getTargetVisible()){ // Checks That The Limelight Is Tracking

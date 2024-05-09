@@ -84,6 +84,10 @@ public class RobotContainer {
     Constants.DriverController.rightBumper().whileTrue(m_climber.runRight(-0.6)); // Lower Right Climber Side
     Constants.DriverController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.DriverController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
+    Constants.DriverController.povLeft().onTrue(Commands.run(() -> {
+      usingVision = !usingVision;
+      m_shooter.stopPivot();
+    }));
 
     // Secondary Operator Controller
     Constants.OperatorController.y().whileTrue(new PSIntake(m_shooter, m_superstructure)); // Hold To Intake Through Shooter
@@ -103,14 +107,16 @@ public class RobotContainer {
                                      stopAmpShoot())));
     Constants.OperatorController.leftBumper().onTrue(m_intake.rotateIntake(-0.2)).onFalse(m_intake.stopRotate()); // Lower Intake
     Constants.OperatorController.rightBumper().onTrue(m_intake.rotateIntake(0.2)).onFalse(m_intake.stopRotate()); // Raise Intake
-    Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15).alongWith(Commands.run(() -> usingVision = false))); // Lower Shooter
-    Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15).alongWith(Commands.run(() -> usingVision = false))); // Raise Shooter
+    Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15).alongWith(Commands.run(() -> usingVision = false))); // Lower Shooter, Disables Vision
+    Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15).alongWith(Commands.run(() -> usingVision = false))); // Raise Shooter, Disables Vision
     Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
-    Constants.OperatorController.povLeft().onTrue(Commands.run(() -> {
+    Constants.OperatorController.povLeft().onTrue(Commands.run(() -> { // Toggle Limelight Vision
       usingVision = !usingVision;
       m_shooter.stopPivot();
     }));
+    Constants.OperatorController.povRight().onTrue(Commands.run(() -> 
+    System.out.println(m_Limelight.angleToGoalDegrees)));
   }
   // Methods used during auto to use intake. Integer values have placeholder values, and will be set later.
 
