@@ -1,7 +1,0 @@
-These three folders contain paths intended to be tested on the blue side of the field.
-1. Makes the path go the opposite way, hopefully avoiding any flipping.
-2. Rotates the robot to look the opposite way.
-3. Does both of these at the same time.
-
-When testing, change the blue auto orientation to the direction the robot is facing during the rest of the path.
-Drag the items in one of the folders into src/main/deploy/pathplanner/paths to use them. Change anything needed to use them.
