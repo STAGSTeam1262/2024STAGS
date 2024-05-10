@@ -7,16 +7,11 @@ import com.revrobotics.CANSparkLowLevel;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase{
-    public static InterpolatingDoubleTreeMap distanceToAngleMap = new InterpolatingDoubleTreeMap();
-    static {
-      distanceToAngleMap.put(1.25, 0.0);//test
-    }
 
     private final TalonFX shooterAngle = new TalonFX(Constants.ShooterConstants.ShooterAngleMotorID, "rio");
     private final CANSparkMax shooterTop;

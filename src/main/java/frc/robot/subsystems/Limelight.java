@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -15,8 +16,6 @@ public class Limelight extends SubsystemBase {
     NetworkTableEntry ty;
     NetworkTableEntry ta;
     NetworkTableEntry tv;
-    public double distanceFromLimelightToGoalInches = 0.0;
-    public double angleToGoalDegrees;
     NetworkTableEntry ledMode;
     NetworkTableEntry camMode;
     NetworkTableEntry pipeline;
@@ -30,7 +29,7 @@ public class Limelight extends SubsystemBase {
     double limeHeight = LimelightConstants.limelightHeight;
     double limeAngle = LimelightConstants.limelightAngle;
     double speakerHeight = 80.43;
-    double yOffsetMeters = LimelightConstants.limelightYOffsetMeters;
+    public double yOffset = LimelightConstants.limelightYOffsetMeters;
     public boolean enabled = LimelightConstants.limelightEnabled;
     int currentPipeline = -1;
     boolean isNetworkTableConnected;
@@ -38,6 +37,12 @@ public class Limelight extends SubsystemBase {
     Translation2d offset;
 
     private static Limelight mainLimelight;
+
+    public static InterpolatingDoubleTreeMap angleChooser = new InterpolatingDoubleTreeMap();
+    static {
+      // Put any yOffset values here with the corresponding angle.
+      angleChooser.put(1.25, 0.0);//test
+    }
 
     public static Limelight getLimelightInstance() {
         if (mainLimelight == null) {
@@ -55,17 +60,17 @@ public class Limelight extends SubsystemBase {
       if (getTargetVisible()){
         // Set yOffset
         ty = table.getEntry("ty");
-        yOffsetMeters = ty.getDouble(0.0);
-
-    // Get Angle
-        angleToGoalDegrees = limeAngle + yOffsetMeters;
-        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0); // Backup
+        yOffset = ty.getDouble(0.0);
       }
     }
 
   public boolean getTargetVisible() {
       if (enabled && isNetworkTableConnected) {
-        return tv.getDouble(0.0) == 1.0;
+        if(tv.getDouble(0.0) == 1.0){
+          return true;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
