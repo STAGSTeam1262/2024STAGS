@@ -84,12 +84,13 @@ public class RobotContainer {
     Constants.DriverController.rightBumper().whileTrue(m_climber.runRight(-0.6)); // Lower Right Climber Side
     Constants.DriverController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.DriverController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
-    Constants.DriverController.povLeft().onTrue(Commands.run(() -> {
+    Constants.DriverController.povLeft().onTrue(Commands.runOnce(() -> {
       usingVision = !usingVision;
+      printUsingVision();
       m_shooter.stopPivot();
     }));
-    Constants.DriverController.povRight().onTrue(Commands.run(() -> 
-    System.out.println(m_Limelight.angleToGoalDegrees))); // Print Limelight's Desired Angle, If Valid
+    Constants.DriverController.povRight().onTrue(Commands.runOnce(() -> 
+    System.out.println(m_Limelight.yOffset))); // Print Limelight's Desired Angle, If Valid
 
     // Secondary Operator Controller
     Constants.OperatorController.y().whileTrue(new PSIntake(m_shooter, m_superstructure)); // Hold To Intake Through Shooter
@@ -109,16 +110,27 @@ public class RobotContainer {
                                      stopAmpShoot())));
     Constants.OperatorController.leftBumper().onTrue(m_intake.rotateIntake(-0.2)).onFalse(m_intake.stopRotate()); // Lower Intake
     Constants.OperatorController.rightBumper().onTrue(m_intake.rotateIntake(0.2)).onFalse(m_intake.stopRotate()); // Raise Intake
-    Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15).alongWith(Commands.run(() -> usingVision = false))); // Lower Shooter, Disables Vision
-    Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15).alongWith(Commands.run(() -> usingVision = false))); // Raise Shooter, Disables Vision
+    Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15).alongWith(Commands.runOnce(() -> { 
+      if(usingVision){
+        usingVision = false;
+        printUsingVision();
+      }
+    }))); // Lower Shooter, Disables Vision
+    Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15).alongWith(Commands.runOnce(() -> {
+      if(usingVision){
+        usingVision = false;
+        printUsingVision();
+      }
+    }))); // Raise Shooter, Disables Vision
     Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
-    Constants.OperatorController.povLeft().onTrue(Commands.run(() -> { // Toggle Limelight Vision
+    Constants.OperatorController.povLeft().onTrue(Commands.runOnce(() -> { // Toggle Limelight Vision
       usingVision = !usingVision;
+      printUsingVision();
       m_shooter.stopPivot();
     }));
-    Constants.OperatorController.povRight().onTrue(Commands.run(() -> 
-    System.out.println(m_Limelight.angleToGoalDegrees))); // Print Limelight's Desired Angle, If Valid
+    Constants.OperatorController.povRight().onTrue(Commands.runOnce(() -> 
+    System.out.println(m_Limelight.yOffset))); // Print Limelight's yOffset, If Valid
   }
   // Methods used during auto to use intake. Integer values have placeholder values, and will be set later.
 
@@ -143,26 +155,34 @@ public class RobotContainer {
   }
 
   // Amp Methods, Set How Trevor Put Originally.
-  public Command prepareAmpShoot(){
+  public Command prepareAmpShoot() {
     return Commands.run(() -> m_shooter.prepareAmpShoot());
   }
   
-  public Command AmpShoot(){
+  public Command AmpShoot() {
     return m_superstructure.setFeederControlled(0.6);
   }
   
-  public void stopAmpShoot(){
+  public void stopAmpShoot() {
     m_shooter.stopShooterWheels();
     m_superstructure.stopFeeder();
   }
 
   // Getting subsystems. This gave me a headache for no reason.
-  public Limelight getLimelight(){ // Could've just made the class public, but it works.
+  public Limelight getLimelight() { // Could've just made the class public, but it works.
     return m_Limelight;
   }
 
-  public ShooterSubsystem getShooterSubsystem(){
+  public ShooterSubsystem getShooterSubsystem() {
     return m_shooter;
+  }
+
+  public void printUsingVision() {
+    if(usingVision){
+      System.out.println("Vision Enabled");
+    } else {
+      System.out.println("Vision Disabled");
+    }
   }
 
   /**
