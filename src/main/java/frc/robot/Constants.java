@@ -72,6 +72,26 @@ public final class Constants {
     public static final double limelightYOffsetMeters = 0.0;
   }
 
+  public static class AprilTagConstants {
+    // AprilTag Information
+    public static final int sourceBlueRight = 1;
+    public static final int sourceBlueLeft = 2;
+    public static final int speakerRedRight = 3;
+    public static final int speakerRedLeft = 4;
+    public static final int ampRed = 5;
+    public static final int ampBlue = 6;
+    public static final int speakerBlueRight = 7;
+    public static final int speakerBlueLeft = 8;
+    public static final int sourceRedRight = 9;
+    public static final int sourceRedLeft = 10;
+    public static final int stageRedOne = 11;
+    public static final int stageRedTwo = 12;
+    public static final int stageRedThree = 13;
+    public static final int stageBlueOne = 14;
+    public static final int stageBlueTwo = 15;
+    public static final int stageBlueThree = 16;
+  }
+
   public static class ClimberConstants{
     //Climber Motor CAN IDs
     public static final int ClimberLeftMotorID = 15;
