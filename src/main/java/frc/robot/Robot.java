@@ -153,11 +153,11 @@ public class Robot extends TimedRobot
       if(limelight.enabled){ // Checks That The Limelight Actually Exists At This Point
         if(limelight.getTargetVisible()){ // Checks That The Limelight Is Tracking
           if(shooterSubsystem.getShooterPosition() <= 100 && shooterSubsystem.getShooterPosition() >= 20){ // Hard Limit Just In Case The Limelight Rotates Too Far. Mostly For Test Stage
-            if(shooterSubsystem.getShooterPosition() < limelight.yOffset){ // yOffset will be replaced with angleChosen
+            if(shooterSubsystem.getShooterPosition() < limelight.angleChosen){ // yOffset will be replaced with angleChosen
               shooterSubsystem.rotatePivot(0.15);
-            } else if(shooterSubsystem.getShooterPosition() > limelight.yOffset){
+            } else if(shooterSubsystem.getShooterPosition() > limelight.angleChosen){
               shooterSubsystem.rotatePivot(-0.15);
-            } else if(shooterSubsystem.getShooterPosition() == limelight.yOffset){
+            } else if(shooterSubsystem.getShooterPosition() == limelight.angleChosen){
               shooterSubsystem.stopPivot();
             }
           } else {
