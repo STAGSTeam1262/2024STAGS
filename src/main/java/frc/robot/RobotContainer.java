@@ -85,9 +85,9 @@ public class RobotContainer {
     Constants.DriverController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.DriverController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
     Constants.DriverController.povLeft().onTrue(Commands.runOnce(() -> {
+      m_shooter.stopPivot();
       usingVision = !usingVision;
       printUsingVision();
-      m_shooter.stopPivot();
     }));
     Constants.DriverController.povRight().onTrue(Commands.runOnce(() -> 
     System.out.println(m_Limelight.yOffset))); // Print Limelight's Desired Angle, If Valid
