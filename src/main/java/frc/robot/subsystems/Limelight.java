@@ -37,7 +37,7 @@ public class Limelight extends SubsystemBase {
     double limeAngle = LimelightConstants.limelightAngle;
     double speakerHeight = 80.43;
     public double yOffset = LimelightConstants.limelightYOffsetMeters;
-    public double angleChosen = 40.0;
+    public double angleChosen = 30.0;
     public int trackingID = 0;
     public boolean enabled = LimelightConstants.limelightEnabled;
     int currentPipeline = -1;
@@ -70,7 +70,7 @@ public class Limelight extends SubsystemBase {
      * More Methods Like This May Be Added Later
      */
     public void sourceAprilTag() {
-      angleChosen = 40;
+      angleChosen = 30.0;
     }
     public void ampAprilTag(){
 
@@ -88,6 +88,13 @@ public class Limelight extends SubsystemBase {
         // Set tracking ID (This will be used later so we know which tags are important)
         tid = table.getEntry("tid");
         trackingID = (int) tid.getDouble(0.0);
+
+        // Possible Pipeline Stuff. Switch Statement will be modified if this works.
+        /*if(DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))){
+          table.getEntry("pipeline").setNumber(0); // Blue pipeline
+        } else if(DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Red))){
+          table.getEntry("pipeline").setNumber(1); // Red pipeline
+        } */
 
         // Add AprilTag ID Logic Here.
         /*if(DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))){
@@ -134,7 +141,7 @@ public class Limelight extends SubsystemBase {
           }
         } */
 
-        angleChosen = yOffset; // This will be commented out.
+        angleChosen = 30.0; // This will be commented out.
       }
     }
 
