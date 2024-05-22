@@ -151,9 +151,9 @@ public class Robot extends TimedRobot
         if(limelight.getTargetVisible()){ // Checks That The Limelight Is Tracking
           if(5 <= shooterSubsystem.getShooterPosition() && shooterSubsystem.getShooterPosition() <= 65){ // Hard Limit Just In Case The Limelight Rotates Too Far. Mostly For Test Stage
             if(shooterSubsystem.getShooterPosition() < limelight.angleChosen){ // Lower Than Wanted Angle
-              shooterSubsystem.rotatePivot(-0.15); // Negative For Raising Shooter
+              shooterSubsystem.rotatePivot(-0.1); // Negative For Raising Shooter, Speed Is Decreased From 0.15 to 0.10
             } else if(shooterSubsystem.getShooterPosition() > limelight.angleChosen){
-              shooterSubsystem.rotatePivot(0.15); // Positive For Lowering Shooter
+              shooterSubsystem.rotatePivot(0.1); // Positive For Lowering Shooter
             } else if(shooterSubsystem.getShooterPosition() == limelight.angleChosen){
               shooterSubsystem.stopPivot(); // Angle Is Correct, So There Is No Need To Change It
             }
@@ -163,7 +163,9 @@ public class Robot extends TimedRobot
         } else {
           shooterSubsystem.stopPivot(); // No Target, So No Point
       }
-    } 
+    } else {
+      shooterSubsystem.stopPivot();
+    }
   }
   }
 
