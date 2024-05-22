@@ -77,6 +77,7 @@ public class Robot extends TimedRobot
   public void disabledInit()
   {
     m_robotContainer.usingVision = false;
+    m_robotContainer.getShooterSubsystem().stopPivot();
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
@@ -102,6 +103,7 @@ public class Robot extends TimedRobot
     // Robot should have the correct angle, and this angle should not change, so we disable vision.
     // This is more of a safeguard really.
     m_robotContainer.usingVision = false;
+    m_robotContainer.getShooterSubsystem().stopPivot();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -132,7 +134,8 @@ public class Robot extends TimedRobot
     }
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);
-    // m_robotContainer.usingVision = true;
+    m_robotContainer.usingVision = false;
+    m_robotContainer.getShooterSubsystem().stopPivot();
   }
 
   /**
@@ -144,27 +147,21 @@ public class Robot extends TimedRobot
     Limelight limelight = m_robotContainer.getLimelight();
     ShooterSubsystem shooterSubsystem = m_robotContainer.getShooterSubsystem();
     if(m_robotContainer.usingVision){ // Makes sure the Limelight Never Rotates The Shooter Unless It Is Supposed To.
-      /* 
-       * Here we are using the fact that objects farther away appear higher in any FOV.
-       * We can use this by finding the yOffset, doing some copy and paste math, and then comparing our shooter position to the angle returned.
-       * There is a limit, and the shooter will stop once it reaches that limit.(Though it shouldn't ever reach that point.)
-       * After this point, the operator should manually move the shooter, because the vision is messed up in some way.
-       */
       if(limelight.enabled){ // Checks That The Limelight Actually Exists At This Point
         if(limelight.getTargetVisible()){ // Checks That The Limelight Is Tracking
-          if(shooterSubsystem.getShooterPosition() <= 100 && shooterSubsystem.getShooterPosition() >= 20){ // Hard Limit Just In Case The Limelight Rotates Too Far. Mostly For Test Stage
-            if(shooterSubsystem.getShooterPosition() < limelight.angleChosen){ // yOffset will be replaced with angleChosen
-              shooterSubsystem.rotatePivot(0.15);
+          if(5 <= shooterSubsystem.getShooterPosition() && shooterSubsystem.getShooterPosition() <= 65){ // Hard Limit Just In Case The Limelight Rotates Too Far. Mostly For Test Stage
+            if(shooterSubsystem.getShooterPosition() < limelight.angleChosen){ // Lower Than Wanted Angle
+              shooterSubsystem.rotatePivot(-0.15); // Negative For Raising Shooter
             } else if(shooterSubsystem.getShooterPosition() > limelight.angleChosen){
-              shooterSubsystem.rotatePivot(-0.15);
+              shooterSubsystem.rotatePivot(0.15); // Positive For Lowering Shooter
             } else if(shooterSubsystem.getShooterPosition() == limelight.angleChosen){
-              shooterSubsystem.stopPivot();
+              shooterSubsystem.stopPivot(); // Angle Is Correct, So There Is No Need To Change It
             }
           } else {
-            shooterSubsystem.stopPivot();
+            shooterSubsystem.stopPivot(); // Beyond Limit, So We Need To Switch To Manual
           }
         } else {
-          shooterSubsystem.stopPivot();
+          shooterSubsystem.stopPivot(); // No Target, So No Point
       }
     } 
   }
