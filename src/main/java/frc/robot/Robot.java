@@ -149,7 +149,6 @@ public class Robot extends TimedRobot
     if(m_robotContainer.usingVision){ // Makes sure the Limelight Never Rotates The Shooter Unless It Is Supposed To.
       if(limelight.enabled){ // Checks That The Limelight Actually Exists At This Point
         if(limelight.getTargetVisible()){ // Checks That The Limelight Is Tracking
-          if(5 <= shooterSubsystem.getShooterPosition() && shooterSubsystem.getShooterPosition() <= 65){ // Hard Limit Just In Case The Limelight Rotates Too Far. Mostly For Test Stage
             if(shooterSubsystem.getShooterPosition() < limelight.angleChosen){ // Lower Than Wanted Angle
               shooterSubsystem.rotatePivot(-0.1); // Negative For Raising Shooter, Speed Is Decreased From 0.15 to 0.10
             } else if(shooterSubsystem.getShooterPosition() > limelight.angleChosen){
@@ -166,7 +165,6 @@ public class Robot extends TimedRobot
     } else {
       shooterSubsystem.stopPivot();
     }
-  }
   }
 
   @Override
