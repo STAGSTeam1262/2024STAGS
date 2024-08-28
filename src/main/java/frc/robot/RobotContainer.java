@@ -77,7 +77,7 @@ public class RobotContainer {
     Constants.DriverController.y().whileTrue(
         Commands.deferredProxy(() -> drivebase.driveToPose(
                                    new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-                              )); // ? We may never know..
+                              )); // ? We may never know.. Something with swerve, I believe
     Constants.DriverController.leftTrigger().whileTrue(m_climber.runLeft(0.6)); // Raise Left Climber Side
     Constants.DriverController.rightTrigger().whileTrue(m_climber.runRight(0.6)); // Raise Right Climber Side
     Constants.DriverController.leftBumper().whileTrue(m_climber.runLeft(-0.6)); // Lower Left Climber Side
@@ -113,12 +113,14 @@ public class RobotContainer {
     Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15).alongWith(Commands.runOnce(() -> { 
       if(usingVision){
         usingVision = false;
+        m_shooter.stopPivot(); // Stops shooter momentarily, but will start again almost immediately
         printUsingVision();
       }
     }))); // Lower Shooter, Disables Vision
     Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15).alongWith(Commands.runOnce(() -> {
       if(usingVision){
         usingVision = false;
+        m_shooter.stopPivot(); // Stops shooter momentarily, but will start again almost immediately
         printUsingVision();
       }
     }))); // Raise Shooter, Disables Vision

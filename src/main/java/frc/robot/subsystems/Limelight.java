@@ -67,7 +67,7 @@ public class Limelight extends SubsystemBase {
     /*
      * Methods Like This Will Be Used When A Certain AprilTag Always Has The Same Angle When Using It's Function.
      * The Source Only Has One Angle, So It Fits Within This Description.
-     * More Methods Like This May Be Added Later
+     * More Methods Like This May Be Added Later, Depending On Our Needs
      */
     public void sourceAprilTag() {
       angleChosen = 30.0;
@@ -89,7 +89,7 @@ public class Limelight extends SubsystemBase {
         tid = table.getEntry("tid");
         trackingID = (int) tid.getDouble(0.0);
 
-        // Possible Pipeline Stuff. Switch Statement will be modified if this works.
+        // Possible Pipeline Stuff. Switch Statement will be modified if this works. If it does I'll be very happy.
         /*if(DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Blue))){
           table.getEntry("pipeline").setNumber(0); // Blue pipeline
         } else if(DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Red))){
@@ -115,7 +115,7 @@ public class Limelight extends SubsystemBase {
               speakerAprilTag();
               break;
             default:
-              // Do nothing, the AprilTag is red.
+              // Do nothing, the AprilTag is red, or it is not present on the camera.
               break;
           }
         } else if(DriverStation.getAlliance().equals(Optional.of(DriverStation.Alliance.Red))){
@@ -136,7 +136,7 @@ public class Limelight extends SubsystemBase {
               speakerAprilTag();
               break;
             default:
-              // Do nothing, the AprilTag is blue.
+              // Do nothing, the AprilTag is blue, or it is not present on camera.
               break;
           }
         } */

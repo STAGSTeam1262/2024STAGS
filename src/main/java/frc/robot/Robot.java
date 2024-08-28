@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Limelight;
@@ -149,21 +150,19 @@ public class Robot extends TimedRobot
     if(m_robotContainer.usingVision){ // Makes sure the Limelight Never Rotates The Shooter Unless It Is Supposed To.
       if(limelight.enabled){ // Checks That The Limelight Actually Exists At This Point
         if(limelight.getTargetVisible()){ // Checks That The Limelight Is Tracking
-            if(shooterSubsystem.getShooterPosition() < limelight.angleChosen){ // Lower Than Wanted Angle
+            if(SmartDashboard.getNumber("Shooter Position", 0) < limelight.angleChosen){ // Lower Than Wanted Angle
               shooterSubsystem.rotatePivot(-0.1); // Negative For Raising Shooter, Speed Is Decreased From 0.15 to 0.10
-            } else if(shooterSubsystem.getShooterPosition() > limelight.angleChosen){
+            } else if(SmartDashboard.getNumber("Shooter Position", 0) > limelight.angleChosen){
               shooterSubsystem.rotatePivot(0.1); // Positive For Lowering Shooter
-            } else if(shooterSubsystem.getShooterPosition() == limelight.angleChosen){
+            } else if(SmartDashboard.getNumber("Shooter Position", 0) == limelight.angleChosen){
               shooterSubsystem.stopPivot(); // Angle Is Correct, So There Is No Need To Change It
             }
           } else {
-            shooterSubsystem.stopPivot(); // Beyond Limit, So We Need To Switch To Manual
+            shooterSubsystem.stopPivot(); // No Target, So No Point
           }
         } else {
-          shooterSubsystem.stopPivot(); // No Target, So No Point
+          shooterSubsystem.stopPivot(); // Limelight Is Not On, Or Isn't Stored Inside Code. Something is wrong if this is an issue.
       }
-    } else {
-      shooterSubsystem.stopPivot();
     }
   }
 
