@@ -1,0 +1,129 @@
+I wanted to find a way to document how I'm making the vision(using a limelight) work.
+I'm going to use this text file, and document any changes here.
+I recommend opening each class mentioned, and reading along while observing the code yourself.
+If you find anything that might not match up with what is said, or is logically wrong, let Aidan know.
+
+Inside the subsystems folder, within the robot directory(src/main/java/frc/robot/subsystems),
+you will find a file named Limelight.java. This is where we want to start.
+
+Here, you'll find a few useful methods, along with the initialization method for the Limelight.
+This method allows us to access the limelight and whatever it sees in the code.
+
+We take a couple of things from this:
+1. Tracking ID (or tid)
+You will find this at the top of the class, and it is an integer.
+When the Limelight sees an AprilTag(QR-Code Like Symbol), it will record the data from it, which will be the tracking id.
+Each AprilTag has an ID specific to where it is on the field. This is important because we can trigger certain functions
+depending on what integer is returned. When the limelight doesn't see an AprilTag, it will return 0, in which case it will do nothing.
+We will come back to this later.
+
+2. TargetY (also known as yOffset or ty)
+When a target is present, this will tell us how high up the target is on camera.
+This is extremely useful, because we can use it to angle our shooter.
+If we're shooting into, for example, the speaker, 
+we want to make the shooter go higher the closer we are to the speaker, or we will hit the wall instead.
+Further away, we want to lower the shooter.
+We can figure out distance based on the TargetY.
+
+There is one other method to pay attention to.
+It's located near the bottom of the file, and is called periodic.
+WPILib makes any periodic method repeat constantly.
+We use this to constantly store the information named above(Tracking ID and TargetY, or tid and ty)
+
+We also use this to act on said information, and then pass off our actions to another class.
+The important thing to notice here is a variable double named angleChosen.
+This is the angle that the shooter will rotate to in certain situations.
+To get this angle, we use something called an InterpolatingDoubleTreeMap.(This, I've put at the top of the class.)
+I've named it angleChooser.
+
+When certain conditions are met(in this case, speaker AprilTags being detected), the code will run this InterpolatingDoubleTreeMap.
+It runs our TargetY through, and will return the angle for the shooter to go to, which we store in angleChosen.
+Each angle needs to be stored inside this InterpolatingDoubleTreeMap for it to know what to return.
+
+Example:
+
+If the TargetY were 0.0, and we wanted to have the shooter angle set to 30, we would input this
+inside the angleChooser:
+
+angleChooser.put(0.0, 30.0);
+
+When the TargetY is 0, it will return 30, because we have told it to. The first number is TargetY, the second is angleChosen.
+
+The programmer will go and find what angles need to be returned for different TargetY values, and put them in a list.
+If TargetY ends up being in-between these values, it will find a point in-between the two closest values.
+
+angleChooser.put(0.0, 30.0);
+angleChooser.put(1.0, 32.0);
+
+Here, TargetY being 0.5 would return 31.0
+
+In cases where the Target ID is something like the Source, there has to be a set angle, because the angle should be the same no matter what.
+At the moment, this hasn't been fully implemented, but the code will ignore the angleChooser, and instead set angleChosen by itself.
+Some commented out code in the periodic method is where this functionality is located.(This also sorts between teams, so ID's that need to be ignored are ignored.)
+
+Now that we've gone through this, we can finally go to other classes. All this for vision!
+
+We need to quickly go to the ShooterSubsystem.java class. The two important methods here at the moment are
+periodic(it's used everywhere), and getShooterPosition.
+
+We'll start with getShooterPosition(). This method does exactly what it says. We have an encoder on the shooter motor,
+and this encoder will return what we call AbsolutePosition. Here, it returns as a 360 degree angle.
+We convert this to a double. Any area that this method is used will return it.
+
+The periodic method here(remember that it loops constantly), is only used to run getShooterPosition().
+It stores this value inside of SmartDashboard, which is used often to return important values.
+We initially use this so that the drivers can see the angle live while driving, but this plays into vision as well.
+
+Finally, we make it into the final processing center for vision, Robot.java. After writing much of this, I was told
+this is a class to avoid using for stuff like this, but oh well. ¯\_(ツ)_/¯
+
+Anyways, here we use, believe it or not, another periodic! This is a special periodic, however, and is the reason
+that I decided to use Robot.java. This periodic is named TeleopPeriodic, and only acts when Teleop is enabled.
+This is important, so that the shooter isn't moving when auto is running, for example.
+
+I access both the ShooterSubsystem and Limelight class, so that I can pull information and methods from them.
+(This is the second reason I use Robot.java, it can access nearly any other class in some way.)
+I pull angleChosen from Limelight.java, and this will control everything from this point.
+The system starts by checking if vision is enabled using a boolean, and this can be changed by either
+attempting to control the shooter manually (which will forcefully stop vision entirely),
+or either driver pressing left on the D-Pad. (Which acts as a toggle. If on, turn off. If off, turn on.)
+
+Side note for testing: Pressing right will return TargetY, though this is visible inside of Shuffleboard,
+so this may not be very useful.
+
+We make sure the Limelight exists, and is enabled. During testing previously, I did experience issues with this,
+where it would return false, and nothing would happen. Be sure to test and be sure about this.
+
+Finally, we check if the target is visible, or if tid is set to 0. Nothing should ever happen if this is the case.
+
+After these checks, we get to the fun stuff, getting the shooter to react to vision tracking.
+
+We start by getting the ShooterPosition from SmartDashboard.
+We use multiple if-else statements here.
+Unfortunately, we can't say ShooterSubsystem.rotateAngle(angleChosen), and have the motor find that angle.
+We have to manually figure out which direction the motor needs to go to reach it's destination. (Sounds like driving school or something)
+
+I'll sort of read the code in more readable English.
+
+If the shooter's current position is lower than angleChosen, then we need to raise the shooter.
+
+The method rotatePivot is used to move the shooter. You can see that a negative number will raise the shooter.
+A positive number will lower the shooter.
+
+ if(SmartDashboard.getNumber("Shooter Position", 0) < limelight.angleChosen){
+              shooterSubsystem.rotatePivot(-0.1);
+            }
+
+If that isn't true, then we need to check if the shooter's current position is higher than angleChosen. In that case, we lower
+the shooter to reach angleChosen.
+
+Finally, if neither of the other two are the case, then we check if the shooter position is right on angleChosen.
+In that case, we stop the shooter using the method stopPivot.
+ShooterPosition isn't extremely precise(it usually is a very long decimal that changes rapidly),
+so the chance of this ever stopping the shooter moving is unlikely. This is probably the biggest downside of this code.
+The shooter will simply go back and forth, hovering around the point it needs to reach.
+
+This is most everything that the vision is done, though somewhat simplified. I hope to make the code more readable,
+but this works for now.
+
+
