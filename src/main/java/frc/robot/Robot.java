@@ -77,8 +77,8 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit()
   {
-    m_robotContainer.usingVision = false;
-    m_robotContainer.getShooterSubsystem().stopPivot();
+    //m_robotContainer.usingVision = false;
+    //m_robotContainer.getShooterSubsystem().stopPivot();
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
@@ -103,8 +103,8 @@ public class Robot extends TimedRobot
     m_robotContainer.setMotorBrake(true);
     // Robot should have the correct angle, and this angle should not change, so we disable vision.
     // This is more of a safeguard really.
-    m_robotContainer.usingVision = false;
-    m_robotContainer.getShooterSubsystem().stopPivot();
+    //m_robotContainer.usingVision = false;
+    //m_robotContainer.getShooterSubsystem().stopPivot();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -135,8 +135,8 @@ public class Robot extends TimedRobot
     }
     m_robotContainer.setDriveMode();
     m_robotContainer.setMotorBrake(true);
-    m_robotContainer.usingVision = false;
-    m_robotContainer.getShooterSubsystem().stopPivot();
+    //m_robotContainer.usingVision = false;
+    //m_robotContainer.getShooterSubsystem().stopPivot();
   }
 
   /**
@@ -145,7 +145,7 @@ public class Robot extends TimedRobot
   @Override
   public void teleopPeriodic(){
     // Since we can access any subsystem from the Robot.java class, I think it makes sense to put our tracking here.
-    Limelight limelight = m_robotContainer.getLimelight();
+    /*Limelight limelight = m_robotContainer.getLimelight();
     ShooterSubsystem shooterSubsystem = m_robotContainer.getShooterSubsystem();
     if(m_robotContainer.usingVision){ // Makes sure the Limelight Never Rotates The Shooter Unless It Is Supposed To.
       if(limelight.enabled){ // Checks That The Limelight Actually Exists At This Point
@@ -163,7 +163,7 @@ public class Robot extends TimedRobot
         } else {
           shooterSubsystem.stopPivot(); // Limelight Is Not On, Or Isn't Stored Inside Code. Something is wrong if this is an issue.
       }
-    }
+    }*/
   }
 
   @Override

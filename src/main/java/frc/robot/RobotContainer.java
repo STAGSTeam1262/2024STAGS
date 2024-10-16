@@ -51,9 +51,9 @@ public class RobotContainer {
   private final Limelight m_Limelight = Limelight.getLimelightInstance();
 
   // Important Booleans. Controls Limelight Usage Along With Enabling The Backup For An Autonomous.
-  boolean usingVision = false; // Tells If The Limelight Should Be Modifying The Shooter Angle. Will be manually set to true during testing.
+  // boolean usingVision = false; // Tells If The Limelight Should Be Modifying The Shooter Angle. Will be manually set to true during testing.
 
-  boolean alwaysUseBackupAuto = false; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
+  boolean alwaysUseBackupAuto = true; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -84,14 +84,14 @@ public class RobotContainer {
     Constants.DriverController.rightBumper().whileTrue(m_climber.runRight(-0.6)); // Lower Right Climber Side
     Constants.DriverController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.DriverController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
-    Constants.DriverController.povLeft().onTrue(Commands.runOnce(() -> {
+    /*Constants.DriverController.povLeft().onTrue(Commands.runOnce(() -> {
       m_shooter.stopPivot();
       usingVision = !usingVision;
       printUsingVision();
     }));
     Constants.DriverController.povRight().onTrue(Commands.runOnce(() -> 
     System.out.println(m_Limelight.yOffset))); // Print Limelight's Desired Angle, If Valid. Will Print 0.0 Otherwise.
-
+    */
     // Secondary Operator Controller
     Constants.OperatorController.y().whileTrue(new PSIntake(m_shooter, m_superstructure)); // Hold To Intake Through Shooter
     Constants.OperatorController.x().whileTrue(new GroundIntake(m_intake, m_superstructure)); // Hold To Intake Through Ground
@@ -111,28 +111,28 @@ public class RobotContainer {
     Constants.OperatorController.leftBumper().onTrue(m_intake.rotateIntake(-0.2)).onFalse(m_intake.stopRotate()); // Lower Intake
     Constants.OperatorController.rightBumper().onTrue(m_intake.rotateIntake(0.2)).onFalse(m_intake.stopRotate()); // Raise Intake
     Constants.OperatorController.leftTrigger().whileTrue(m_shooter.rotateShooter(-0.15).alongWith(Commands.runOnce(() -> { 
-      if(usingVision){
+      /*if(usingVision){
         usingVision = false;
         m_shooter.stopPivot(); // Stops shooter momentarily, but will start again almost immediately
         printUsingVision();
-      }
+      }*/
     }))); // Lower Shooter, Disables Vision
     Constants.OperatorController.rightTrigger().whileTrue(m_shooter.rotateShooter(0.15).alongWith(Commands.runOnce(() -> {
-      if(usingVision){
+      /*if(usingVision){
         usingVision = false;
         m_shooter.stopPivot(); // Stops shooter momentarily, but will start again almost immediately
         printUsingVision();
-      }
+      }*/
     }))); // Raise Shooter, Disables Vision
     Constants.OperatorController.povUp().whileTrue(new BothClimbers(m_climber)); // Raise Both Climbers
     Constants.OperatorController.povDown().whileTrue(new BothClimbersDown(m_climber)); // Lower Both Climbers
     Constants.OperatorController.povLeft().onTrue(Commands.runOnce(() -> { // Toggle Limelight Vision
-      usingVision = !usingVision;
+      /*usingVision = !usingVision;
       printUsingVision();
-      m_shooter.stopPivot();
+      m_shooter.stopPivot();*/
     }));
-    Constants.OperatorController.povRight().onTrue(Commands.runOnce(() -> 
-    System.out.println(m_Limelight.yOffset))); // Print Limelight's yOffset, If Valid
+    /*Constants.OperatorController.povRight().onTrue(Commands.runOnce(() -> 
+    System.out.println(m_Limelight.yOffset)));*/ // Print Limelight's yOffset, If Valid
   }
   // Methods used during auto to use intake. Integer values have placeholder values, and will be set later.
 
@@ -179,13 +179,13 @@ public class RobotContainer {
     return m_shooter;
   }
 
-  public void printUsingVision() {
+  /*public void printUsingVision() {
     if(usingVision){
       System.out.println("Vision Enabled");
     } else {
       System.out.println("Vision Disabled");
     }
-  }
+  }*/
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
