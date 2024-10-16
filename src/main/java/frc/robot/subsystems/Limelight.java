@@ -81,7 +81,7 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
-      if (getTargetVisible()){
+      /*if (getTargetVisible()){
         // Set yOffset
         ty = table.getEntry("ty");
         yOffset = ty.getDouble(0.0);
@@ -139,10 +139,10 @@ public class Limelight extends SubsystemBase {
               // Do nothing, the AprilTag is blue, or it is not present on camera.
               break;
           }
-        } */
+        }
 
         angleChosen = 30.0; // This will be commented out.
-      }
+      } */
     }
 
     public boolean getTargetVisible() {

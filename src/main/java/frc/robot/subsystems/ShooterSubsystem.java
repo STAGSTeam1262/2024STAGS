@@ -16,7 +16,7 @@ public class ShooterSubsystem extends SubsystemBase{
     private final TalonFX shooterAngle = new TalonFX(Constants.ShooterConstants.ShooterAngleMotorID, "rio");
     private final CANSparkMax shooterTop;
     private final CANSparkMax shooterBottom;
-    private final CANcoder shooterEncoder;
+    //private final CANcoder shooterEncoder;
 
     public ShooterSubsystem() {
         shooterAngle.setNeutralMode(NeutralModeValue.Brake);
@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase{
         shooterBottom.setInverted(true);
         shooterBottom.setSmartCurrentLimit(30);
 
-        shooterEncoder = new CANcoder(25, "absolute"); //Absolute Encoder for Shooter Pivot
+        //shooterEncoder = new CANcoder(25, "absolute"); //Absolute Encoder for Shooter Pivot
     }
     public void setShooterWheels(double power) {
         shooterTop.set(power);
@@ -53,11 +53,11 @@ public class ShooterSubsystem extends SubsystemBase{
     public void stopPivot() {
         shooterAngle.set(0);
     }
-    public double getShooterPosition() {
+    /*public double getShooterPosition() {
         var absolutePositionSignal = shooterEncoder.getAbsolutePosition();
         double absolutePositionValue = absolutePositionSignal.getValueAsDouble();
         return absolutePositionValue * 360;
-    }
+    }*/
 
     public Command manualShoot(double power) {
         return run(() -> setShooterWheels(power));
@@ -86,10 +86,10 @@ public class ShooterSubsystem extends SubsystemBase{
         setTopWheel(0.15);
     }
 
-    @Override
+    /*@Override
     public void periodic()
     {
         SmartDashboard.putNumber("Shooter Position", getShooterPosition());
-    }
+    }*/
     
 }
