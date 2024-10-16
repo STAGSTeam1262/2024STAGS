@@ -53,7 +53,7 @@ public class RobotContainer {
   // Important Booleans. Controls Limelight Usage Along With Enabling The Backup For An Autonomous.
   // boolean usingVision = false; // Tells If The Limelight Should Be Modifying The Shooter Angle. Will be manually set to true during testing.
 
-  boolean alwaysUseBackupAuto = true; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
+  boolean alwaysUseBackupAuto = false; // Should always be false, except for testing or if main auto isn't working. The backup auto will always run if no alliance is selected.
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

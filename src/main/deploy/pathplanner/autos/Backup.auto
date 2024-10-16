@@ -60,6 +60,12 @@
                       "data": {
                         "name": "stopFeeder"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "zeroGyro"
+                      }
                     }
                   ]
                 }
